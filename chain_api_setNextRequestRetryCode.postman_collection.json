@@ -1,0 +1,262 @@
+{
+	"info": {
+		"_postman_id": "a9fce953-589c-4780-8a6a-2d929bb8e9e6",
+		"name": "chain_api_setNextRequestRetryCode",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27072337"
+	},
+	"item": [
+		{
+			"name": "create user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log();\r",
+							"\r",
+							"pm.test(\"Response time is less than 800ms\", function (){\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(800);\r",
+							"});\r",
+							"pm.test(\"Status code is 200\", function (){\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code name has string\", function (){\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"\r",
+							"var statusCode=pm.response.status;\r",
+							"\r",
+							"if(statusCode=\"OK\")\r",
+							"{\r",
+							"    postman.setNextRequest(\"get user details\")\r",
+							"}else{\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var email = pm.variables.replaceIn('{{$randomEmail}}');\r",
+							"pm.collectionVariables.set(\"Coll_Email\",email);\r",
+							"\r",
+							"var password = pm.variables.replaceIn('{{$randomPassword}}');\r",
+							"pm.collectionVariables.set(\"Coll_Password\",password);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"eve.holt@reqres.in\",\r\n    \"password\": \"pistol\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reqres.in/api/register",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user details",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response time is less than 800ms\", function (){\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(800);\r",
+							"});\r",
+							"pm.test(\"Status code is 200\", function (){\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code name has string\", function (){\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"var statusCode=pm.response.status;\r",
+							"\r",
+							"if(statusCode=\"OK\")\r",
+							"{\r",
+							"    postman.setNextRequest(\"update user details\")\r",
+							"}else{\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://reqres.in/api/users?page=2",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user details",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"var requestBody = pm.request.body.raw;\r",
+							"requestBody=JSON.parse(requestBody);\r",
+							"var req_name=requestBody.name;\r",
+							"var req_job=requestBody.job;\r",
+							"var actualdate= new Date().toISOString().slice(0,13);\r",
+							"\r",
+							"\r",
+							"var responseBody = pm.response.json();\r",
+							"\r",
+							"var res_name = responseBody.name;\r",
+							"var res_job= responseBody.job;\r",
+							"var res_id= responseBody.id;\r",
+							"var res_updatedAt=responseBody.updatedAt;\r",
+							"res_updatedAt=res_updatedAt.slice(0,13);\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate Response Body Parameter Name\", function() {\r",
+							"    pm.expect(res_name).to.eql(req_name);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Response Body Parameter Job\", function() {\r",
+							"    pm.expect(res_job).to.eql(req_job);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Response Body Parameter ID\", function() {\r",
+							"    pm.expect(res_id).to.not.null;\r",
+							"    pm.expect(res_id).to.not.eql(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Response Body Parameter Date\", function() {\r",
+							"    pm.expect(res_updatedAt).to.eql(actualdate);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"morpheus\",\r\n    \"job\": \"zion resident\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reqres.in/api/users/2",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Coll_Email",
+			"value": ""
+		},
+		{
+			"key": "Coll_Password",
+			"value": ""
+		}
+	]
+}
